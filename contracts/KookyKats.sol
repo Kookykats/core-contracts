@@ -100,7 +100,7 @@ contract KookyKats is ERC721A, Ownable {
         return
             revealURITokenId >= _tokenId
                 ? string(abi.encodePacked(baseURI, _tokenId.toString()))
-                : "";
+                : string(abi.encodePacked(baseURI, "placeholder"));
     }
 
     /// @dev KooKyKats Royalty info

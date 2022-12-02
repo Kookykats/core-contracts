@@ -55,7 +55,8 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
     function openMintRound(
         MINT_ROUNDS roundId,
         uint16 maxAmount,
-        uint256 fee
+        uint256 fee,
+        bytes32 whitelist
     ) external onlyOwner {
         require(
             ROUND_ID == MINT_ROUNDS.NONE,
@@ -69,7 +70,8 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         ROUND_ID = roundId;
         MAX_MINT_AMOUNT = maxAmount;
         MINT_FEE = fee;
-        emit MintRoundOpend(roundId, maxAmount, fee);
+        setWhitelist(whitelist);
+        emit MintRoundOpend(roundId, maxAmount, fee, whitelist);
     }
 
     /// @dev Close mint phrase
@@ -81,7 +83,6 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         ROUND_ID = MINT_ROUNDS.NONE;
         MAX_MINT_AMOUNT = 0;
         MINT_FEE = 0;
-        _pause();
         emit MintRoundClosed();
     }
 
@@ -138,7 +139,7 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
 
     event SetKookyKats(address indexed kookykats);
 
-    event MintRoundOpend(MINT_ROUNDS roundId, uint16 maxAmount, uint256 fee);
+    event MintRoundOpend(MINT_ROUNDS roundId, uint16 maxAmount, uint256 fee, bytes32 whitelist);
 
     event MintRoundClosed();
 

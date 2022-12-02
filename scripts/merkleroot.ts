@@ -1,10 +1,14 @@
 import { generateTree } from "./utils/merkle";
 import { writeFile } from "./utils/io";
-import WhitelistJSON from "./utils/whitelist.json";
+import PaidWhitelistJSON from "./utils/paid-whitelist.json";
+import FreeWhitelistJSON from "./utils/free-whitelist.json";
 
 async function main() {
-  const tree = generateTree(WhitelistJSON);
-  writeFile(tree, 'merkleroot.json');
+  const tree = generateTree(PaidWhitelistJSON);
+  writeFile(tree, 'paid-merkleroot.json');
+  
+  const freeTree = generateTree(FreeWhitelistJSON);
+  writeFile(freeTree, 'free-merkleroot.json');
 }
 
 main().catch((error) => {

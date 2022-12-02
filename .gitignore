@@ -9,3 +9,6 @@ typechain-types
 cache
 artifacts
 
+scripts/utils/*-whitelist.json
+scripts/utils/goerli/*-merkleroot.json
+scripts/utils/mainnet/*-merkleroot.json
