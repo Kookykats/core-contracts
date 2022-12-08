@@ -34,9 +34,8 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
     /// @dev Minting participants data per minting round
     mapping(MINT_ROUNDS => mapping(address => uint256)) public participants;
 
-    constructor(address kat, bytes32 root) {
+    constructor(address kat) {
         setKookyKats(kat);
-        setWhitelist(root);
         _pause();
     }
 
@@ -101,12 +100,10 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         payable(to).transfer(payable(address(this)).balance);
     }
 
-    function mint(bytes32[] calldata proofs, uint256 amount)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-    {
+    function mint(
+        bytes32[] calldata proofs,
+        uint256 amount
+    ) external payable nonReentrant whenNotPaused {
         require(
             ROUND_ID != MINT_ROUNDS.NONE,
             "KookyKatsSale: No ongoing minting round"
@@ -139,7 +136,12 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
 
     event SetKookyKats(address indexed kookykats);
 
-    event MintRoundOpend(MINT_ROUNDS roundId, uint16 maxAmount, uint256 fee, bytes32 whitelist);
+    event MintRoundOpend(
+        MINT_ROUNDS roundId,
+        uint16 maxAmount,
+        uint256 fee,
+        bytes32 whitelist
+    );
 
     event MintRoundClosed();
 
