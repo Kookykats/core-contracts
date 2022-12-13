@@ -42,6 +42,7 @@ function getChainConfig(
     accounts: [DEPLOYER],
     chainId: SUPPORTED_CHAINS[chain],
     url: "https://" + chain + ".infura.io/v3/" + INFURA_PROJECT_ID,
+    timeout: 100000,
   };
 }
 

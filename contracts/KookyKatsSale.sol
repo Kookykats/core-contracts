@@ -16,8 +16,9 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         PUBLIC_PAID_MINT
     }
 
-    /// @dev Merkle root of kookykats whitelisted users
-    bytes32 public KOOKY_KATS_WHITELIST;
+    bytes32 public FREE_MINT_WHITELIST;
+
+    bytes32 public PAID_MINT_WHITELIST;
 
     /// @dev Current ongoing mint round Id
     MINT_ROUNDS public ROUND_ID;
@@ -39,10 +40,14 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         _pause();
     }
 
-    /// @dev Set the merkle root of kookykats whitelisted users
-    function setWhitelist(bytes32 root) public onlyOwner {
-        KOOKY_KATS_WHITELIST = root;
-        emit Whitelisted(root);
+    /// @dev Set free mint whitelist merkleroot
+    function setFreeMintWhitelist(bytes32 root) external onlyOwner {
+        FREE_MINT_WHITELIST = root;
+    }
+
+    /// @dev Set paid mint whitelist merkleroot
+    function setPaidMintWhitelist(bytes32 root) external onlyOwner {
+        PAID_MINT_WHITELIST = root;
     }
 
     function setKookyKats(address kat) public onlyOwner {
@@ -54,8 +59,7 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
     function openMintRound(
         MINT_ROUNDS roundId,
         uint16 maxAmount,
-        uint256 fee,
-        bytes32 whitelist
+        uint256 fee
     ) external onlyOwner {
         require(
             ROUND_ID == MINT_ROUNDS.NONE,
@@ -69,8 +73,7 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         ROUND_ID = roundId;
         MAX_MINT_AMOUNT = maxAmount;
         MINT_FEE = fee;
-        setWhitelist(whitelist);
-        emit MintRoundOpend(roundId, maxAmount, fee, whitelist);
+        emit MintRoundOpend(roundId, maxAmount, fee);
     }
 
     /// @dev Close mint phrase
@@ -117,10 +120,13 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         require(mintedAmount <= MAX_MINT_AMOUNT, "KookyKatsSale: Overflow");
 
         if (ROUND_ID != MINT_ROUNDS.PUBLIC_PAID_MINT) {
+            bytes32 whitelist = ROUND_ID == MINT_ROUNDS.WHITELIST_FREE_MINT
+                ? FREE_MINT_WHITELIST
+                : PAID_MINT_WHITELIST;
             require(
                 MerkleProof.verify(
                     proofs,
-                    KOOKY_KATS_WHITELIST,
+                    whitelist,
                     keccak256(abi.encodePacked(_msgSender()))
                 ),
                 "KookyKatsSale: Only whitelisted users can participate"
@@ -136,12 +142,7 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
 
     event SetKookyKats(address indexed kookykats);
 
-    event MintRoundOpend(
-        MINT_ROUNDS roundId,
-        uint16 maxAmount,
-        uint256 fee,
-        bytes32 whitelist
-    );
+    event MintRoundOpend(MINT_ROUNDS roundId, uint16 maxAmount, uint256 fee);
 
     event MintRoundClosed();
 
