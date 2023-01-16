@@ -21,7 +21,7 @@ contract KookyKats is ERC721A, Ownable {
     string public baseURI;
 
     /// @dev KookyKats NFT placeholder token URI
-    string public placeholderURI = "ipfs://QmWLVbeSTbtVfRXEtB3VhvRfPj5C8asDYP3SZqueGJCTVM";
+    string public placeholderURI;
 
     /// @dev Royalty receiver address
     address public royaltyReceiver;
@@ -106,10 +106,14 @@ contract KookyKats is ERC721A, Ownable {
         returns (string memory)
     {
         if (!_exists(_tokenId)) revert URIQueryForNonexistentToken();
-        return
-            revealURITokenId >= _tokenId
-                ? string(abi.encodePacked(baseURI, _tokenId.toString()))
-                : placeholderURI;
+        string memory uri;
+        if (revealURITokenId >= _tokenId) {
+            uri = baseURI;
+        } else {
+            uri = placeholderURI;
+        }
+
+        return string(abi.encodePacked(uri, _tokenId.toString()));
     }
 
     /// @dev KooKyKats Royalty info
