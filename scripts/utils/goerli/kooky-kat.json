@@ -1,9 +1,9 @@
 {
-  "address": "0xc4f4675629F613b29b90e7F61597e76381eACe24",
+  "address": "0x7DDB5278Ca00A19Ec84B9AafF25aC7E1E29FccE7",
   "args": [
     "KookyKats",
     "KKAT",
-    5000,
+    10,
     500
   ]
 }

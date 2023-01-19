@@ -40,5 +40,17 @@
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.32",
     "path": "^0.12.7"
+  },
+  "scripts": {
+    "deploy-nft-goerli": "npx hardhat run scripts/kooky-kat/deploy.ts --network goerli",
+    "verify-nft-goerli": "npx hardhat run scripts/kooky-kat/verify.ts --network goerli",
+    "deploy-minter-goerli": "npx hardhat run scripts/minter/deploy.ts --network goerli",
+    "verify-minter-goerli": "npx hardhat run scripts/minter/verify.ts --network goerli",
+    "merkle-goerli": "npx hardhat run scripts/merkleroot.ts --network goerli",
+    "deploy-nft-mainnet": "npx hardhat run scripts/kooky-kat/deploy.ts --network mainnet",
+    "verify-nft-mainnet": "npx hardhat run scripts/kooky-kat/verify.ts --network mainnet",
+    "deploy-minter-mainnet": "npx hardhat run scripts/minter/deploy.ts --network mainnet",
+    "verify-minter-mainnet": "npx hardhat run scripts/minter/verify.ts --network mainnet",
+    "merkle-mainnet": "npx hardhat run scripts/merkleroot.ts --network mainnet"
   }
 }

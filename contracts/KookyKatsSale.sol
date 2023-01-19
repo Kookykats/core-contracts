@@ -26,6 +26,12 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
     /// @dev Max LLC amount per person in each round
     uint16 public MAX_MINT_AMOUNT;
 
+    /// @dev Reserved amount for free minting whitelist
+    uint16 public RESERVED_MINT_AMOUNT;
+
+    /// @dev Ignore reserved amount
+    bool public IGNORE_RESERVED_AMOUNT;
+
     /// @dev KookyKats NFT contract
     IKookyKats public KOOKY_KATS;
 
@@ -50,9 +56,19 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
         PAID_MINT_WHITELIST = root;
     }
 
+    /// @dev Set reserved minting amount
+    function setReservedAmount(uint16 amount) external onlyOwner {
+        RESERVED_MINT_AMOUNT = amount;
+    }
+
+    /// @dev Set KookyKats NFT contract address
     function setKookyKats(address kat) public onlyOwner {
         KOOKY_KATS = IKookyKats(kat);
         emit SetKookyKats(kat);
+    }
+
+    function setIgnoreReservedAmount() public onlyOwner {
+        IGNORE_RESERVED_AMOUNT = !IGNORE_RESERVED_AMOUNT;
     }
 
     /// @dev Open new mint phrase
@@ -131,6 +147,17 @@ contract KookyKatsSale is Ownable, Pausable, ReentrancyGuard {
                 ),
                 "KookyKatsSale: Only whitelisted users can participate"
             );
+        }
+
+        if (ROUND_ID != MINT_ROUNDS.WHITELIST_FREE_MINT) {
+            uint256 maxSupply = KOOKY_KATS.MAX_SUPPLY();
+            uint256 totalSupply = KOOKY_KATS.totalSupply();
+
+            if (!IGNORE_RESERVED_AMOUNT) {
+                maxSupply -= RESERVED_MINT_AMOUNT;
+            }
+
+            require(totalSupply + amount <= maxSupply, "KookyKatsSale: Overflowed");
         }
 
         KOOKY_KATS.mint(_msgSender(), amount);
